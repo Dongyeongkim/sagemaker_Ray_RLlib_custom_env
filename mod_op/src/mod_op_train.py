@@ -11,20 +11,7 @@ from mod_op_env import EpidemicMultiEnv
 
 from sagemaker_rl.ray_launcher import SageMakerRayLauncher
         
-"""
-def create_environment(env_config):
-    import gym
-#     from gym.spaces import Space
-    from gym.envs.registration import register
 
-    # This import must happen inside the method so that worker processes import this code
-    register(
-        id='ArrivalSim-v0',
-        entry_point='env:ArrivalSim',
-        kwargs= {'price' : 40}
-    )
-    return gym.make('ArrivalSim-v0')
-"""
 def create_environment(env_config):
     population = [
     np.load("./data/seocho.npy"),
@@ -47,12 +34,12 @@ class MyLauncher(SageMakerRayLauncher):
         self.num_total_gpus = self.num_gpus * len(self.hosts_info)
         
     def register_env_creator(self):
-        register_env("ArrivalSim-v0", create_environment)
+        register_env("EpidemicMultiEnv-v0", EpidemicMultiEnv)
 
     def get_experiment_config(self):
         return {
           "training": {
-            "env": "ArrivalSim-v0",
+            "env": "EpidemicMultiEnv-v0",
             "run": "PPO",
             "stop": {
               "training_iteration": 3,
