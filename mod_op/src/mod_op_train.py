@@ -7,7 +7,7 @@ from ray.tune import run_experiments
 import ray.rllib.agents.a3c as a3c
 import ray.rllib.agents.ppo as ppo
 from ray.tune.registry import register_env
-from mod_op_env import ArrivalSim
+from mod_op_env import EpidemicMultiEnv
 
 from sagemaker_rl.ray_launcher import SageMakerRayLauncher
         
@@ -26,10 +26,17 @@ def create_environment(env_config):
     return gym.make('ArrivalSim-v0')
 """
 def create_environment(env_config):
-    price = 30.0
+    population = [
+    np.load("./data/seocho.npy"),
+    np.load("./data/daechi.npy"),
+    np.load("./data/dogok.npy"),
+    np.load("./data/yangjae.npy"),
+    np.load("./data/sunreung.npy"),
+    np.load("./data/nambu.npy")
+    ]
     # This import must happen inside the method so that worker processes import this code
-    from mod_op_env import ArrivalSim
-    return ArrivalSim(price)
+    from mod_op_env import EpidemicMultiEnv
+    return EpidemicMultiEnv(200,population)
 
 
 class MyLauncher(SageMakerRayLauncher):
